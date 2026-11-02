@@ -16,6 +16,7 @@
     --dur: 6s; /* tiempo que dura cada producto destacado */
   }
   * { box-sizing: border-box; margin: 0; }
+  html, body { overflow-x: clip; max-width: 100%; }
   body { font-family: var(--font); color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; line-height: 1.5; }
   a { color: inherit; }
   :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -26,10 +27,15 @@
   @keyframes blink { 50% { opacity: 0; } }
 
   /* Destacados que rotan */
-  .stage { max-width: 1400px; margin: 0 auto; padding: 28px var(--pad) 8px; }
-  .slides { display: grid; }
+  .hero { max-width: 1400px; margin: 0 auto; padding: 44px var(--pad) 0; }
+  .hero h1 { font-size: clamp(32px, 6vw, 72px); font-weight: 600; line-height: 1.02; letter-spacing: -.04em; max-width: 18ch; }
+  .hero p { margin-top: 14px; color: var(--muted); font-size: clamp(14px, 1.4vw, 17px); }
+  .slide-skel { grid-area: 1 / 1; height: clamp(240px, 34vw, 420px); border-radius: 6px; background: linear-gradient(90deg, #f1f1f1, #fafafa, #f1f1f1); background-size: 200% 100%; animation: sh 1.4s linear infinite; }
+  .rule { width: calc(100% - 2 * var(--pad)); max-width: calc(1400px - 2 * var(--pad)); margin: 40px auto 0; border: 0; border-top: 1px solid var(--line); }
+  .stage { max-width: 1400px; margin: 0 auto; padding: 40px var(--pad) 8px; }
+  .slides { display: grid; grid-template-columns: minmax(0, 1fr); }
   .slide {
-    grid-area: 1 / 1; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(24px, 5vw, 72px); align-items: center;
+    grid-area: 1 / 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(24px, 5vw, 72px); align-items: center;
     opacity: 0; visibility: hidden; transition: opacity .9s ease, visibility .9s;
   }
   .slide.on { opacity: 1; visibility: visible; }
@@ -40,8 +46,8 @@
   .slide .price { font-size: clamp(24px, 3vw, 34px); }
   .cta { margin-top: 8px; background: var(--ink); color: var(--paper); text-decoration: none; font-size: 14px; font-weight: 500; padding: 14px 26px; border-radius: 999px; transition: opacity .2s; }
   .cta:hover { opacity: .8; }
-  .slide-media { aspect-ratio: 5 / 4; background: var(--tile); border-radius: 6px; overflow: hidden; display: grid; place-items: center; padding: 7%; }
-  .slide-media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.07); transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
+  .slide-media { aspect-ratio: 5 / 4; background: var(--tile); position: relative; border-radius: 6px; overflow: hidden; }
+  .slide-media img { position: absolute; inset: 7%; width: 86%; height: 86%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.07); transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
   .slide.on .slide-media img { transform: none; }
 
   .dots { display: flex; gap: 8px; margin-top: 18px; }
@@ -57,7 +63,20 @@
   .controls-inner { max-width: 1400px; margin: 0 auto; padding: 12px var(--pad); display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
   .field { font: inherit; font-size: 13px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; min-width: 0; }
   input.field { width: min(240px, 100%); }
-  select.field { cursor: pointer; }
+  .dd { position: relative; }
+  .dd-btn { font: inherit; font-size: 13px; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; background: var(--paper); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px 8px 18px; transition: border-color .2s; }
+  .dd-btn:hover, .dd-btn[aria-expanded="true"] { border-color: var(--ink); }
+  .dd-btn svg { width: 11px; height: 11px; transition: transform .2s; }
+  .dd-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .dd-menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 10; width: 210px; margin: 0; padding: 6px; list-style: none; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,.08);
+    opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity .18s, transform .18s, visibility .18s; }
+  .dd.open .dd-menu { opacity: 1; visibility: visible; transform: none; }
+  .dd-menu li { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 10px; font-size: 13px; cursor: pointer; }
+  .dd-menu li.hl { background: var(--tile); }
+  .dd-menu li[aria-selected="true"] { font-weight: 600; }
+  .dd-menu li[aria-selected="true"]::after { content: "\2713"; font-size: 12px; }
   .range { display: flex; align-items: center; gap: 12px; font-size: 13px; flex: 1 1 280px; max-width: 420px; }
   .range label { white-space: nowrap; min-width: 150px; }
   .range input { flex: 1; accent-color: var(--ink); cursor: pointer; }
@@ -68,8 +87,8 @@
   .count { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 36px 20px; }
   .card { display: flex; flex-direction: column; text-decoration: none; }
-  .media { position: relative; aspect-ratio: 1 / 1; background: var(--tile); border-radius: 4px; overflow: hidden; display: grid; place-items: center; padding: 9%; }
-  .media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; opacity: 0; transition: opacity .5s, transform .6s cubic-bezier(.2,.7,.2,1); }
+  .media { position: relative; aspect-ratio: 1 / 1; background: var(--tile); border-radius: 4px; overflow: hidden; }
+  .media img { position: absolute; inset: 9%; width: 82%; height: 82%; object-fit: contain; mix-blend-mode: multiply; opacity: 0; transition: opacity .5s, transform .6s cubic-bezier(.2,.7,.2,1); }
   .media img.loaded { opacity: 1; }
   .card:hover .media img.loaded { transform: scale(1.04); }
   .off { position: absolute; top: 12px; left: 12px; background: var(--ink); color: var(--paper); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
@@ -89,7 +108,8 @@
   footer { border-top: 1px solid var(--line); padding: 28px var(--pad); color: var(--muted); font-size: 13px; }
 
   @media (max-width: 760px) {
-    .slide { grid-template-columns: 1fr; gap: 20px; }
+    .slide { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .dd-menu { left: 0; right: auto; }
     .slide-media { order: -1; aspect-ratio: 4 / 3; }
     .slide h2 { max-width: none; }
     .grid { grid-template-columns: repeat(2, 1fr); gap: 32px 14px; }
@@ -105,8 +125,15 @@
 
 <header><a class="brand" href="#" aria-label="Tekian IT, inicio">&gt;TEKIAN IT<span class="cursor" aria-hidden="true"></span></a></header>
 
-<section class="stage" id="stage" aria-roledescription="carrusel" aria-label="Productos destacados" hidden>
-  <div class="slides" id="slides"></div>
+<section class="hero">
+  <h1>Encontrá tus celulares premium.</h1>
+  <p>Elegí acá y completá la compra en MercadoLibre.</p>
+</section>
+
+<hr class="rule">
+
+<section class="stage" id="stage" aria-roledescription="carrusel" aria-label="Productos destacados">
+  <div class="slides" id="slides"><div class="slide-skel"></div></div>
   <div class="dots" id="dots"></div>
 </section>
 
@@ -115,12 +142,11 @@
     <input class="field" id="q" type="search" placeholder="Buscar producto" aria-label="Buscar producto">
     <div class="range"><label for="max" id="maxLabel">Cualquier precio</label><input id="max" type="range"></div>
     <div class="spacer"></div>
-    <select class="field" id="sort" aria-label="Ordenar">
-      <option value="default">Orden original</option>
-      <option value="asc">Menor precio</option>
-      <option value="desc">Mayor precio</option>
-      <option value="off">Mayor descuento</option>
-    </select>
+    <div class="dd" id="dd">
+      <button class="dd-btn" id="ddBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Ordenar"><span id="ddLabel">Orden original</span>
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.5l4 4 4-4"/></svg></button>
+      <ul class="dd-menu" id="ddMenu" role="listbox" tabindex="-1"></ul>
+    </div>
   </div>
 </div>
 
@@ -133,24 +159,12 @@
 
 <script>
 const API_URL = "https://api.tekian.ar/products";
-// Si la API falla (por ejemplo por CORS) se muestran datos de ejemplo para poder seguir diseñando.
-// Ponelo en false para producción.
-const USE_SAMPLE_ON_ERROR = true;
-const SAMPLE = [
-{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2253254947-celular-motorola-moto-e14-642gb-ram-accesorio-de-color-violeta-aceptable-reacondicionado-_JM","titulo":"Celular Motorola Moto E14 64/2gb Ram + Accesorio De Color Violeta - Aceptable (Reacondicionado)","precio":171375.72,"precio_original":176676.0,"url_imagen_portada":"https://http2.mlstatic.com/D_768630-MLA99953891401_112025-O.webp"},
-{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-4095616372-celular-redmi-12-4gb-ram-128gb-negro-_JM","titulo":"Celular Redmi 12 4gb Ram 128gb Negro","precio":181535.5,"precio_original":197000.0,"url_imagen_portada":"https://http2.mlstatic.com/D_875354-MLA118106576324_102026-O.webp"},
-{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2835535042-h-tp-link-tl-sf1008d-con-8-puertos-a-10100-mbps-_JM","titulo":"H Tp-link Tl-sf1008d Con 8 Puertos A 10/100 Mbps","precio":15000.0,"precio_original":null,"url_imagen_portada":"https://http2.mlstatic.com/D_638266-MLA105993855066_022026-O.jpg"},
-{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2253104781-samsung-galaxy-a04-64gb-negro-4gb-ram-aceptable-reacondicionado-_JM","titulo":"Samsung Galaxy A04 64gb Negro 4gb Ram - Aceptable (Reacondicionado)","precio":171375.72,"precio_original":176676.0,"url_imagen_portada":"https://http2.mlstatic.com/D_992197-MLA99858747799_112025-O.jpg"},
-{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-4148444360-samsung-galaxy-a06-128gb-4gb-black-bueno-reacondicionado-_JM","titulo":"Samsung Galaxy A06 128gb 4gb Black - Bueno (Reacondicionado)","precio":208550.0,"precio_original":215000.0,"url_imagen_portada":"https://http2.mlstatic.com/D_994299-MLA79994471007_102024-O.webp"},
-{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2222094857-xiaomi-redmi-9a-32gb-dual-sim-32-gb-negro-2-gb-ram-excelente-reacondicionado-_JM","titulo":"Xiaomi Redmi 9a 32gb Dual Sim 32 Gb Negro 2 Gb Ram - Excelente (Reacondicionado)","precio":159999.0,"precio_original":null,"url_imagen_portada":"https://http2.mlstatic.com/D_618485-MLA82958073622_032025-O.webp"},
-{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-3919730064-xiaomi-redmi-note-10-5g-128gb-plata-cromada-4gb-ram-excelente-reacondicionado-_JM","titulo":"Xiaomi Redmi Note 10 5g 128gb Plata Cromada 4gb Ram - Excelente (Reacondicionado)","precio":232800.0,"precio_original":240000.0,"url_imagen_portada":"https://http2.mlstatic.com/D_653380-MLA48579050644_122021-O.webp"}
-];
 
 const $ = id => document.getElementById(id);
 const grid = $("grid"), count = $("count"), stage = $("stage"), slidesEl = $("slides"), dotsEl = $("dots");
 const maxEl = $("max"), maxLabel = $("maxLabel");
 const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
-const state = { all: [], q: "", max: Infinity, ceil: 0, sort: "default", sample: false };
+const state = { all: [], q: "", max: Infinity, ceil: 0, sort: "default" };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const REFURB = /\s*-?\s*(Aceptable|Bueno|Muy bueno|Excelente)?\s*\(Reacondicionado\)\s*$/i;
@@ -177,12 +191,11 @@ function view() {
 
 function render() {
   const list = view();
-  count.textContent = (list.length === 1 ? "1 producto" : `${list.length} productos`) +
-    (state.sample ? ". Datos de ejemplo: no se pudo conectar con la API." : "");
+  count.textContent = (list.length === 1 ? "1 producto" : `${list.length} productos`);
   if (!list.length) { grid.innerHTML = `<div class="msg"><h2>No hay productos con esos filtros</h2><p>Probá con otra búsqueda o un precio más alto.</p></div>`; return; }
   grid.innerHTML = list.map(p => `
     <a class="card" href="${esc(p.url)}" target="_blank" rel="noopener">
-      <div class="media">${p.off ? `<span class="off">-${p.off}%</span>` : ""}<img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy" decoding="async"></div>
+      <div class="media">${p.off ? `<span class="off">-${p.off}%</span>` : ""}<img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>
       <div class="info"><span class="cond">${p.cond}</span><h3 class="title">${esc(p.title)}</h3>${priceHTML(p)}</div>
     </a>`).join("");
   grid.querySelectorAll("img").forEach(img => { const d = () => img.classList.add("loaded"); img.complete ? d() : (img.onload = img.onerror = d); });
@@ -190,6 +203,7 @@ function render() {
 
 // Destacados: cada uno dura --dur y pasa al siguiente con fundido
 let cur = 0, items = [];
+dotsEl.addEventListener("animationend", e => { if (e.animationName === "fill" && items.length > 1) go((cur + 1) % items.length); });
 function go(i) {
   const s = [...slidesEl.children], d = [...dotsEl.children];
   s[cur].classList.remove("on"); s[cur].setAttribute("aria-hidden", "true"); d[cur].classList.remove("on");
@@ -204,13 +218,12 @@ function buildStage() {
     <article class="slide" aria-hidden="true">
       <div class="slide-text"><span class="cond">${p.cond}</span><h2>${esc(p.title)}</h2>${priceHTML(p)}
         <a class="cta" href="${esc(p.url)}" target="_blank" rel="noopener">Ver en MercadoLibre</a></div>
-      <div class="slide-media"><img src="${esc(p.img)}" alt="${esc(p.title)}"></div>
+      <div class="slide-media"><img src="${esc(p.img)}" alt="${esc(p.title)}" referrerpolicy="no-referrer"></div>
     </article>`).join("");
   dotsEl.innerHTML = items.map((p, i) => `<button class="dot" aria-label="Ver ${esc(p.title)}"><i></i></button>`).join("");
   dotsEl.hidden = items.length < 2;
   [...dotsEl.children].forEach((b, i) => b.onclick = () => go(i));
-  dotsEl.addEventListener("animationend", e => { if (e.animationName === "fill") go((cur + 1) % items.length); });
-  stage.hidden = false; cur = 0;
+  cur = 0;
   const s0 = slidesEl.children[0], d0 = dotsEl.children[0];
   s0.classList.add("on"); s0.removeAttribute("aria-hidden"); d0.classList.add("on");
 }
@@ -222,29 +235,55 @@ function setupPrice() {
   maxEl.min = lo; maxEl.max = state.ceil; maxEl.step = 1000; maxEl.value = state.ceil;
 }
 
+function showError() {
+  stage.hidden = true; count.textContent = "";
+  grid.innerHTML = `<div class="msg"><h2>No pudimos cargar el catálogo</h2><p>Revisá tu conexión e intentá de nuevo.</p><button class="field" id="retry" style="margin-top:16px;cursor:pointer">Reintentar</button></div>`;
+  $("retry").onclick = load;
+}
+
 async function load() {
+  stage.hidden = false; slidesEl.innerHTML = '<div class="slide-skel"></div>'; dotsEl.innerHTML = "";
   grid.innerHTML = Array.from({ length: 8 }, () => `<div class="card skel"><div class="media"></div><div class="bar"></div><div class="bar s"></div></div>`).join("");
   count.textContent = "Cargando productos";
-  let data;
   try {
     const res = await fetch(API_URL);
     if (!res.ok) throw new Error("HTTP " + res.status);
-    data = await res.json();
+    const data = await res.json();
+    state.all = data.map(normalize).filter(p => p.title && p.url);
   } catch (e) {
-    console.error("Error al cargar la API:", e);
-    if (!USE_SAMPLE_ON_ERROR) {
-      count.textContent = "";
-      grid.innerHTML = `<div class="msg"><h2>No pudimos cargar el catálogo</h2><p>Revisá tu conexión e intentá de nuevo.</p></div>`;
-      return;
-    }
-    data = SAMPLE; state.sample = true;
+    console.error("No se pudo leer la API. Si el error dice CORS, hay que permitir este origen en api.tekian.ar.", e);
+    return showError();
   }
-  state.all = data.map(normalize).filter(p => p.title && p.url);
+  if (!state.all.length) { stage.hidden = true; count.textContent = ""; grid.innerHTML = `<div class="msg"><h2>Todavía no hay productos</h2><p>Volvé en un rato.</p></div>`; return; }
   setupPrice(); buildStage(); render();
 }
 
 $("q").addEventListener("input", e => { state.q = e.target.value.trim().toLowerCase(); render(); });
-$("sort").addEventListener("change", e => { state.sort = e.target.value; render(); });
+const SORTS = [["default", "Orden original"], ["asc", "Menor precio"], ["desc", "Mayor precio"], ["off", "Mayor descuento"]];
+const dd = $("dd"), ddBtn = $("ddBtn"), ddMenu = $("ddMenu");
+let hl = 0;
+ddMenu.innerHTML = SORTS.map(([v, t]) => `<li role="option" data-v="${v}">${t}</li>`).join("");
+const opts = [...ddMenu.children];
+function paintDD() { opts.forEach((o, i) => { o.setAttribute("aria-selected", o.dataset.v === state.sort); o.classList.toggle("hl", i === hl); }); }
+function openDD(open) {
+  dd.classList.toggle("open", open); ddBtn.setAttribute("aria-expanded", open);
+  if (open) { hl = Math.max(0, SORTS.findIndex(x => x[0] === state.sort)); paintDD(); }
+}
+function pick(i) {
+  state.sort = SORTS[i][0]; $("ddLabel").textContent = SORTS[i][1]; openDD(false); paintDD(); render(); ddBtn.focus();
+}
+ddBtn.addEventListener("click", () => openDD(!dd.classList.contains("open")));
+opts.forEach((o, i) => { o.onclick = () => pick(i); o.onmouseenter = () => { hl = i; paintDD(); }; });
+document.addEventListener("click", e => { if (!dd.contains(e.target)) openDD(false); });
+dd.addEventListener("keydown", e => {
+  const open = dd.classList.contains("open");
+  if (e.key === "Escape") { openDD(false); ddBtn.focus(); }
+  else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault(); if (!open) return openDD(true);
+    hl = (hl + (e.key === "ArrowDown" ? 1 : -1) + SORTS.length) % SORTS.length; paintDD();
+  } else if ((e.key === "Enter" || e.key === " ") && open) { e.preventDefault(); pick(hl); }
+});
+paintDD();
 maxEl.addEventListener("input", () => {
   const v = Number(maxEl.value), any = v >= state.ceil;
   state.max = any ? Infinity : v;
