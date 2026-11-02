@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tekian IT: catálogo</title>
+<meta name="description" content="Celulares y equipos de red. La compra se completa en MercadoLibre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #fff; --ink: #000; --muted: #6b6b6b; --line: #e6e6e6; --tile: #f4f4f4;
+    --font: "Sora", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* cambiá la fuente acá */
+    --pad: clamp(20px, 4vw, 56px);
+    --dur: 6s; /* tiempo que dura cada producto destacado */
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font); color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; line-height: 1.5; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  header { display: flex; align-items: center; padding: 18px var(--pad); border-bottom: 1px solid var(--line); }
+  .brand { font-weight: 700; font-size: 18px; letter-spacing: .02em; text-decoration: none; display: inline-flex; align-items: baseline; }
+  .brand .cursor { display: inline-block; width: .6em; height: .12em; background: var(--ink); margin-left: .25em; animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Destacados que rotan */
+  .stage { max-width: 1400px; margin: 0 auto; padding: 28px var(--pad) 8px; }
+  .slides { display: grid; }
+  .slide {
+    grid-area: 1 / 1; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(24px, 5vw, 72px); align-items: center;
+    opacity: 0; visibility: hidden; transition: opacity .9s ease, visibility .9s;
+  }
+  .slide.on { opacity: 1; visibility: visible; }
+  .slide-text { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; opacity: 0; transform: translateY(16px); transition: opacity .8s .2s, transform .8s .2s cubic-bezier(.2,.7,.2,1); }
+  .slide.on .slide-text { opacity: 1; transform: none; }
+  .slide h2 { font-size: clamp(26px, 4vw, 50px); font-weight: 600; line-height: 1.08; letter-spacing: -.03em; max-width: 16ch;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .slide .price { font-size: clamp(24px, 3vw, 34px); }
+  .cta { margin-top: 8px; background: var(--ink); color: var(--paper); text-decoration: none; font-size: 14px; font-weight: 500; padding: 14px 26px; border-radius: 999px; transition: opacity .2s; }
+  .cta:hover { opacity: .8; }
+  .slide-media { aspect-ratio: 5 / 4; background: var(--tile); border-radius: 6px; overflow: hidden; display: grid; place-items: center; padding: 7%; }
+  .slide-media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.07); transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
+  .slide.on .slide-media img { transform: none; }
+
+  .dots { display: flex; gap: 8px; margin-top: 18px; }
+  .dot { background: none; border: 0; padding: 10px 0; flex: 0 0 56px; cursor: pointer; }
+  .dot i { display: block; height: 2px; background: var(--line); position: relative; overflow: hidden; }
+  .dot i::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; }
+  .dot.on i::after { animation: fill var(--dur) linear forwards; }
+  @keyframes fill { to { transform: scaleX(1); } }
+  .stage:hover .dot.on i::after, .stage:focus-within .dot.on i::after { animation-play-state: paused; }
+
+  /* Controles */
+  .controls { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); margin-top: 24px; }
+  .controls-inner { max-width: 1400px; margin: 0 auto; padding: 12px var(--pad); display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .field { font: inherit; font-size: 13px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; min-width: 0; }
+  input.field { width: min(240px, 100%); }
+  select.field { cursor: pointer; }
+  .range { display: flex; align-items: center; gap: 12px; font-size: 13px; flex: 1 1 280px; max-width: 420px; }
+  .range label { white-space: nowrap; min-width: 150px; }
+  .range input { flex: 1; accent-color: var(--ink); cursor: pointer; }
+  .spacer { flex: 1; }
+
+  /* Grilla */
+  main { max-width: 1400px; margin: 0 auto; padding: 28px var(--pad) 72px; }
+  .count { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 36px 20px; }
+  .card { display: flex; flex-direction: column; text-decoration: none; }
+  .media { position: relative; aspect-ratio: 1 / 1; background: var(--tile); border-radius: 4px; overflow: hidden; display: grid; place-items: center; padding: 9%; }
+  .media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; opacity: 0; transition: opacity .5s, transform .6s cubic-bezier(.2,.7,.2,1); }
+  .media img.loaded { opacity: 1; }
+  .card:hover .media img.loaded { transform: scale(1.04); }
+  .off { position: absolute; top: 12px; left: 12px; background: var(--ink); color: var(--paper); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .info { padding-top: 14px; display: flex; flex-direction: column; gap: 4px; }
+  .cond { font-size: 12px; color: var(--muted); }
+  .title { font-size: 14px; font-weight: 500; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .prices { display: flex; align-items: baseline; gap: 10px; margin-top: 4px; flex-wrap: wrap; }
+  .price { font-size: 19px; font-weight: 600; letter-spacing: -.02em; }
+  .was { font-size: 13px; color: var(--muted); text-decoration: line-through; }
+  .skel .media, .skel .bar { background: linear-gradient(90deg, #f1f1f1, #fafafa, #f1f1f1); background-size: 200% 100%; animation: sh 1.4s linear infinite; }
+  .skel .bar { height: 12px; border-radius: 4px; margin-top: 12px; }
+  .skel .bar.s { width: 40%; }
+  @keyframes sh { to { background-position: -200% 0; } }
+  .msg { padding: 48px 0; }
+  .msg h2 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+  .msg p { color: var(--muted); margin-top: 6px; }
+  footer { border-top: 1px solid var(--line); padding: 28px var(--pad); color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 760px) {
+    .slide { grid-template-columns: 1fr; gap: 20px; }
+    .slide-media { order: -1; aspect-ratio: 4 / 3; }
+    .slide h2 { max-width: none; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 32px 14px; }
+    .spacer { display: none; }
+    input.field { flex: 1 1 100%; width: 100%; }
+    .range { max-width: none; flex-basis: 100%; }
+  }
+  @media (max-width: 380px) { .grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header><a class="brand" href="#" aria-label="Tekian IT, inicio">&gt;TEKIAN IT<span class="cursor" aria-hidden="true"></span></a></header>
+
+<section class="stage" id="stage" aria-roledescription="carrusel" aria-label="Productos destacados" hidden>
+  <div class="slides" id="slides"></div>
+  <div class="dots" id="dots"></div>
+</section>
+
+<div class="controls">
+  <div class="controls-inner">
+    <input class="field" id="q" type="search" placeholder="Buscar producto" aria-label="Buscar producto">
+    <div class="range"><label for="max" id="maxLabel">Cualquier precio</label><input id="max" type="range"></div>
+    <div class="spacer"></div>
+    <select class="field" id="sort" aria-label="Ordenar">
+      <option value="default">Orden original</option>
+      <option value="asc">Menor precio</option>
+      <option value="desc">Mayor precio</option>
+      <option value="off">Mayor descuento</option>
+    </select>
+  </div>
+</div>
+
+<main>
+  <p class="count" id="count" aria-live="polite"></p>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>Tekian IT. Los precios y la disponibilidad se confirman en MercadoLibre.</footer>
+
+<script>
+const API_URL = "https://api.tekian.ar/products";
+// Si la API falla (por ejemplo por CORS) se muestran datos de ejemplo para poder seguir diseñando.
+// Ponelo en false para producción.
+const USE_SAMPLE_ON_ERROR = true;
+const SAMPLE = [
+{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2253254947-celular-motorola-moto-e14-642gb-ram-accesorio-de-color-violeta-aceptable-reacondicionado-_JM","titulo":"Celular Motorola Moto E14 64/2gb Ram + Accesorio De Color Violeta - Aceptable (Reacondicionado)","precio":171375.72,"precio_original":176676.0,"url_imagen_portada":"https://http2.mlstatic.com/D_768630-MLA99953891401_112025-O.webp"},
+{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-4095616372-celular-redmi-12-4gb-ram-128gb-negro-_JM","titulo":"Celular Redmi 12 4gb Ram 128gb Negro","precio":181535.5,"precio_original":197000.0,"url_imagen_portada":"https://http2.mlstatic.com/D_875354-MLA118106576324_102026-O.webp"},
+{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2835535042-h-tp-link-tl-sf1008d-con-8-puertos-a-10100-mbps-_JM","titulo":"H Tp-link Tl-sf1008d Con 8 Puertos A 10/100 Mbps","precio":15000.0,"precio_original":null,"url_imagen_portada":"https://http2.mlstatic.com/D_638266-MLA105993855066_022026-O.jpg"},
+{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2253104781-samsung-galaxy-a04-64gb-negro-4gb-ram-aceptable-reacondicionado-_JM","titulo":"Samsung Galaxy A04 64gb Negro 4gb Ram - Aceptable (Reacondicionado)","precio":171375.72,"precio_original":176676.0,"url_imagen_portada":"https://http2.mlstatic.com/D_992197-MLA99858747799_112025-O.jpg"},
+{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-4148444360-samsung-galaxy-a06-128gb-4gb-black-bueno-reacondicionado-_JM","titulo":"Samsung Galaxy A06 128gb 4gb Black - Bueno (Reacondicionado)","precio":208550.0,"precio_original":215000.0,"url_imagen_portada":"https://http2.mlstatic.com/D_994299-MLA79994471007_102024-O.webp"},
+{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-2222094857-xiaomi-redmi-9a-32gb-dual-sim-32-gb-negro-2-gb-ram-excelente-reacondicionado-_JM","titulo":"Xiaomi Redmi 9a 32gb Dual Sim 32 Gb Negro 2 Gb Ram - Excelente (Reacondicionado)","precio":159999.0,"precio_original":null,"url_imagen_portada":"https://http2.mlstatic.com/D_618485-MLA82958073622_032025-O.webp"},
+{"url_publicacion":"https://articulo.mercadolibre.com.ar/MLA-3919730064-xiaomi-redmi-note-10-5g-128gb-plata-cromada-4gb-ram-excelente-reacondicionado-_JM","titulo":"Xiaomi Redmi Note 10 5g 128gb Plata Cromada 4gb Ram - Excelente (Reacondicionado)","precio":232800.0,"precio_original":240000.0,"url_imagen_portada":"https://http2.mlstatic.com/D_653380-MLA48579050644_122021-O.webp"}
+];
+
+const $ = id => document.getElementById(id);
+const grid = $("grid"), count = $("count"), stage = $("stage"), slidesEl = $("slides"), dotsEl = $("dots");
+const maxEl = $("max"), maxLabel = $("maxLabel");
+const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+const state = { all: [], q: "", max: Infinity, ceil: 0, sort: "default", sample: false };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+const REFURB = /\s*-?\s*(Aceptable|Bueno|Muy bueno|Excelente)?\s*\(Reacondicionado\)\s*$/i;
+function normalize(p) {
+  const raw = p.titulo || "", m = raw.match(REFURB);
+  const price = Number(p.precio), orig = p.precio_original ? Number(p.precio_original) : null;
+  const off = orig && orig > price ? Math.round((1 - price / orig) * 100) : 0;
+  return {
+    title: raw.replace(REFURB, "").replace(/^H\s+/, "").trim(),
+    cond: m ? (m[1] ? `Reacondicionado: ${m[1].toLowerCase()}` : "Reacondicionado") : "Nuevo",
+    price, orig: off ? orig : null, off, img: p.url_imagen_portada, url: p.url_publicacion
+  };
+}
+
+const priceHTML = p => `<div class="prices"><span class="price">${money.format(p.price)}</span>${p.orig ? `<span class="was">${money.format(p.orig)}</span>` : ""}</div>`;
+
+function view() {
+  const list = state.all.filter(p => p.title.toLowerCase().includes(state.q) && p.price <= state.max);
+  if (state.sort === "asc") list.sort((a, b) => a.price - b.price);
+  if (state.sort === "desc") list.sort((a, b) => b.price - a.price);
+  if (state.sort === "off") list.sort((a, b) => b.off - a.off);
+  return list;
+}
+
+function render() {
+  const list = view();
+  count.textContent = (list.length === 1 ? "1 producto" : `${list.length} productos`) +
+    (state.sample ? ". Datos de ejemplo: no se pudo conectar con la API." : "");
+  if (!list.length) { grid.innerHTML = `<div class="msg"><h2>No hay productos con esos filtros</h2><p>Probá con otra búsqueda o un precio más alto.</p></div>`; return; }
+  grid.innerHTML = list.map(p => `
+    <a class="card" href="${esc(p.url)}" target="_blank" rel="noopener">
+      <div class="media">${p.off ? `<span class="off">-${p.off}%</span>` : ""}<img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy" decoding="async"></div>
+      <div class="info"><span class="cond">${p.cond}</span><h3 class="title">${esc(p.title)}</h3>${priceHTML(p)}</div>
+    </a>`).join("");
+  grid.querySelectorAll("img").forEach(img => { const d = () => img.classList.add("loaded"); img.complete ? d() : (img.onload = img.onerror = d); });
+}
+
+// Destacados: cada uno dura --dur y pasa al siguiente con fundido
+let cur = 0, items = [];
+function go(i) {
+  const s = [...slidesEl.children], d = [...dotsEl.children];
+  s[cur].classList.remove("on"); s[cur].setAttribute("aria-hidden", "true"); d[cur].classList.remove("on");
+  cur = i;
+  s[cur].classList.add("on"); s[cur].removeAttribute("aria-hidden");
+  void d[cur].offsetWidth; d[cur].classList.add("on"); // reinicia la barra de progreso
+}
+function buildStage() {
+  items = state.all.slice(0, 6);
+  if (!items.length) return;
+  slidesEl.innerHTML = items.map(p => `
+    <article class="slide" aria-hidden="true">
+      <div class="slide-text"><span class="cond">${p.cond}</span><h2>${esc(p.title)}</h2>${priceHTML(p)}
+        <a class="cta" href="${esc(p.url)}" target="_blank" rel="noopener">Ver en MercadoLibre</a></div>
+      <div class="slide-media"><img src="${esc(p.img)}" alt="${esc(p.title)}"></div>
+    </article>`).join("");
+  dotsEl.innerHTML = items.map((p, i) => `<button class="dot" aria-label="Ver ${esc(p.title)}"><i></i></button>`).join("");
+  dotsEl.hidden = items.length < 2;
+  [...dotsEl.children].forEach((b, i) => b.onclick = () => go(i));
+  dotsEl.addEventListener("animationend", e => { if (e.animationName === "fill") go((cur + 1) % items.length); });
+  stage.hidden = false; cur = 0;
+  const s0 = slidesEl.children[0], d0 = dotsEl.children[0];
+  s0.classList.add("on"); s0.removeAttribute("aria-hidden"); d0.classList.add("on");
+}
+
+function setupPrice() {
+  const prices = state.all.map(p => p.price);
+  const lo = Math.floor(Math.min(...prices) / 10000) * 10000;
+  state.ceil = Math.ceil(Math.max(...prices) / 10000) * 10000;
+  maxEl.min = lo; maxEl.max = state.ceil; maxEl.step = 1000; maxEl.value = state.ceil;
+}
+
+async function load() {
+  grid.innerHTML = Array.from({ length: 8 }, () => `<div class="card skel"><div class="media"></div><div class="bar"></div><div class="bar s"></div></div>`).join("");
+  count.textContent = "Cargando productos";
+  let data;
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    data = await res.json();
+  } catch (e) {
+    console.error("Error al cargar la API:", e);
+    if (!USE_SAMPLE_ON_ERROR) {
+      count.textContent = "";
+      grid.innerHTML = `<div class="msg"><h2>No pudimos cargar el catálogo</h2><p>Revisá tu conexión e intentá de nuevo.</p></div>`;
+      return;
+    }
+    data = SAMPLE; state.sample = true;
+  }
+  state.all = data.map(normalize).filter(p => p.title && p.url);
+  setupPrice(); buildStage(); render();
+}
+
+$("q").addEventListener("input", e => { state.q = e.target.value.trim().toLowerCase(); render(); });
+$("sort").addEventListener("change", e => { state.sort = e.target.value; render(); });
+maxEl.addEventListener("input", () => {
+  const v = Number(maxEl.value), any = v >= state.ceil;
+  state.max = any ? Infinity : v;
+  maxLabel.textContent = any ? "Cualquier precio" : `Hasta ${money.format(v)}`;
+  render();
+});
+
+load();
+</script>
+</body>
+</html>
