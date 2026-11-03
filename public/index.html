@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tekian IT: catálogo</title>
-<meta name="description" content="Celulares y equipos de red. La compra se completa en MercadoLibre.">
+<title>Tekian IT</title>
+<meta name="description" content="Celulares y equipos de red, listos para usar.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='6'%3E%3Cpath d='M19 15v34'/%3E%3Cpath d='M31 17l17 15-17 15'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,10 +14,11 @@
     --paper: #fff; --ink: #000; --muted: #6b6b6b; --line: #e6e6e6; --tile: #f4f4f4;
     --font: "Sora", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* cambiá la fuente acá */
     --pad: clamp(20px, 4vw, 56px);
-    --dur: 6s; /* tiempo que dura cada producto destacado */
+    --dur: 4s; /* tiempo que dura cada producto destacado */
   }
   * { box-sizing: border-box; margin: 0; }
-  html, body { overflow-x: clip; max-width: 100%; }
+  html { width: 100%; max-width: 100%; overflow-x: hidden; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { position: relative; width: 100%; max-width: 100%; overflow-x: clip; touch-action: pan-y pinch-zoom; }
   body { font-family: var(--font); color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; line-height: 1.5; }
   a { color: inherit; }
   :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -30,28 +32,28 @@
   .hero { max-width: 1400px; margin: 0 auto; padding: 44px var(--pad) 0; }
   .hero h1 { font-size: clamp(32px, 6vw, 72px); font-weight: 600; line-height: 1.02; letter-spacing: -.04em; max-width: 18ch; }
   .hero p { margin-top: 14px; color: var(--muted); font-size: clamp(14px, 1.4vw, 17px); }
-  .slide-skel { grid-area: 1 / 1; height: clamp(240px, 34vw, 420px); border-radius: 6px; background: linear-gradient(90deg, #f1f1f1, #fafafa, #f1f1f1); background-size: 200% 100%; animation: sh 1.4s linear infinite; }
+  .slide-skel { grid-area: 1 / 1; height: clamp(240px, 30vw, 380px); border-radius: 6px; background: linear-gradient(90deg, #f1f1f1, #fafafa, #f1f1f1); background-size: 200% 100%; animation: sh 1.4s linear infinite; }
   .rule { width: calc(100% - 2 * var(--pad)); max-width: calc(1400px - 2 * var(--pad)); margin: 40px auto 0; border: 0; border-top: 1px solid var(--line); }
-  .stage { max-width: 1400px; margin: 0 auto; padding: 40px var(--pad) 8px; }
-  .slides { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .stage { max-width: 1400px; margin: 0 auto; padding: 40px var(--pad) 8px; overflow-x: clip; }
+  .slides { display: grid; grid-template-columns: minmax(0, 1fr); overflow: hidden; contain: paint; }
   .slide {
     grid-area: 1 / 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(24px, 5vw, 72px); align-items: center;
     opacity: 0; visibility: hidden; transition: opacity .9s ease, visibility .9s;
   }
   .slide.on { opacity: 1; visibility: visible; }
-  .slide-text { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; opacity: 0; transform: translateY(16px); transition: opacity .8s .2s, transform .8s .2s cubic-bezier(.2,.7,.2,1); }
+  .slide-text { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; opacity: 0; transform: translateY(16px); transition: opacity .8s .2s, transform .8s .2s cubic-bezier(.2,.7,.2,1); }
   .slide.on .slide-text { opacity: 1; transform: none; }
-  .slide h2 { font-size: clamp(26px, 4vw, 50px); font-weight: 600; line-height: 1.08; letter-spacing: -.03em; max-width: 16ch;
+  .slide h2 { overflow-wrap: anywhere; font-size: clamp(26px, 3.4vw, 44px); font-weight: 600; line-height: 1.08; letter-spacing: -.03em; max-width: 16ch;
     display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
   .slide .price { font-size: clamp(24px, 3vw, 34px); }
   .cta { margin-top: 8px; background: var(--ink); color: var(--paper); text-decoration: none; font-size: 14px; font-weight: 500; padding: 14px 26px; border-radius: 999px; transition: opacity .2s; }
   .cta:hover { opacity: .8; }
-  .slide-media { aspect-ratio: 5 / 4; background: var(--tile); position: relative; border-radius: 6px; overflow: hidden; }
+  .slide-media { height: clamp(240px, 30vw, 380px); background: var(--tile); position: relative; border-radius: 6px; overflow: hidden; }
   .slide-media img { position: absolute; inset: 7%; width: 86%; height: 86%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.07); transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
   .slide.on .slide-media img { transform: none; }
 
-  .dots { display: flex; gap: 8px; margin-top: 18px; }
-  .dot { background: none; border: 0; padding: 10px 0; flex: 0 0 56px; cursor: pointer; }
+  .dots { display: flex; gap: 6px; margin-top: 18px; min-width: 0; max-width: 100%; overflow: hidden; }
+  .dot { background: none; border: 0; padding: 10px 0; flex: 1 1 0; min-width: 0; max-width: 48px; cursor: pointer; }
   .dot i { display: block; height: 2px; background: var(--line); position: relative; overflow: hidden; }
   .dot i::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; }
   .dot.on i::after { animation: fill var(--dur) linear forwards; }
@@ -77,16 +79,16 @@
   .dd-menu li.hl { background: var(--tile); }
   .dd-menu li[aria-selected="true"] { font-weight: 600; }
   .dd-menu li[aria-selected="true"]::after { content: "\2713"; font-size: 12px; }
-  .range { display: flex; align-items: center; gap: 12px; font-size: 13px; flex: 1 1 280px; max-width: 420px; }
+  .range { display: flex; align-items: center; gap: 12px; font-size: 13px; flex: 1 1 280px; min-width: 0; max-width: 420px; }
   .range label { white-space: nowrap; min-width: 150px; }
-  .range input { flex: 1; accent-color: var(--ink); cursor: pointer; }
+  .range input { flex: 1; min-width: 0; accent-color: var(--ink); cursor: pointer; }
   .spacer { flex: 1; }
 
   /* Grilla */
-  main { max-width: 1400px; margin: 0 auto; padding: 28px var(--pad) 72px; }
+  main { max-width: 1400px; margin: 0 auto; padding: 28px var(--pad) 72px; overflow-x: clip; }
   .count { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 36px 20px; }
-  .card { display: flex; flex-direction: column; text-decoration: none; }
+  .card { display: flex; flex-direction: column; text-decoration: none; min-width: 0; }
   .media { position: relative; aspect-ratio: 1 / 1; background: var(--tile); border-radius: 4px; overflow: hidden; }
   .media img { position: absolute; inset: 9%; width: 82%; height: 82%; object-fit: contain; mix-blend-mode: multiply; opacity: 0; transition: opacity .5s, transform .6s cubic-bezier(.2,.7,.2,1); }
   .media img.loaded { opacity: 1; }
@@ -105,19 +107,20 @@
   .msg { padding: 48px 0; }
   .msg h2 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
   .msg p { color: var(--muted); margin-top: 6px; }
-  footer { border-top: 1px solid var(--line); padding: 28px var(--pad); color: var(--muted); font-size: 13px; }
+  footer { border-top: 1px solid var(--line); padding: 28px var(--pad); color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
 
   @media (max-width: 760px) {
     .slide { grid-template-columns: minmax(0, 1fr); gap: 20px; }
     .dd-menu { left: 0; right: auto; }
-    .slide-media { order: -1; aspect-ratio: 4 / 3; }
+    .slide-media { order: -1; height: clamp(200px, 58vw, 300px); }
+    .slide-skel { height: 420px; }
     .slide h2 { max-width: none; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 32px 14px; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 14px; }
     .spacer { display: none; }
     input.field { flex: 1 1 100%; width: 100%; }
     .range { max-width: none; flex-basis: 100%; }
   }
-  @media (max-width: 380px) { .grid { grid-template-columns: 1fr; } }
+  @media (max-width: 380px) { .grid { grid-template-columns: minmax(0, 1fr); } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -126,8 +129,8 @@
 <header><a class="brand" href="#" aria-label="Tekian IT, inicio">&gt;TEKIAN IT<span class="cursor" aria-hidden="true"></span></a></header>
 
 <section class="hero">
-  <h1>Encontrá tus celulares premium.</h1>
-  <p>Elegí acá y completá la compra en MercadoLibre.</p>
+  <h1>Encontrá tus equipos premium.</h1>
+  <p>Hardware de calidad listo para usar.</p>
 </section>
 
 <hr class="rule">
@@ -155,9 +158,10 @@
   <div class="grid" id="grid"></div>
 </main>
 
-<footer>Tekian IT. Los precios y la disponibilidad se confirman en MercadoLibre.</footer>
+<footer><span>&copy; <span id="year">2026</span> Tekian IT. Todos los derechos reservados.</span><span>Precios y disponibilidad sujetos a MercadoLibre.</span></footer>
 
 <script>
+document.getElementById("year").textContent = new Date().getFullYear();
 const API_URL = "https://api.tekian.ar/products";
 
 const $ = id => document.getElementById(id);
@@ -217,7 +221,7 @@ function buildStage() {
   slidesEl.innerHTML = items.map(p => `
     <article class="slide" aria-hidden="true">
       <div class="slide-text"><span class="cond">${p.cond}</span><h2>${esc(p.title)}</h2>${priceHTML(p)}
-        <a class="cta" href="${esc(p.url)}" target="_blank" rel="noopener">Ver en MercadoLibre</a></div>
+        <a class="cta" href="${esc(p.url)}" target="_blank" rel="noopener">Ver más detalles</a></div>
       <div class="slide-media"><img src="${esc(p.img)}" alt="${esc(p.title)}" referrerpolicy="no-referrer"></div>
     </article>`).join("");
   dotsEl.innerHTML = items.map((p, i) => `<button class="dot" aria-label="Ver ${esc(p.title)}"><i></i></button>`).join("");
@@ -237,7 +241,7 @@ function setupPrice() {
 
 function showError() {
   stage.hidden = true; count.textContent = "";
-  grid.innerHTML = `<div class="msg"><h2>No pudimos cargar el catálogo</h2><p>Revisá tu conexión e intentá de nuevo.</p><button class="field" id="retry" style="margin-top:16px;cursor:pointer">Reintentar</button></div>`;
+  grid.innerHTML = `<div class="msg"><h2>No pudimos cargar los productos</h2><p>Revisá tu conexión e intentá de nuevo.</p><button class="field" id="retry" style="margin-top:16px;cursor:pointer">Reintentar</button></div>`;
   $("retry").onclick = load;
 }
 

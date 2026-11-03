@@ -1,8 +1,6 @@
 FROM nginx:alpine
 
+# El contenido estático se monta desde ./public en docker-compose.yml
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY . /usr/share/nginx/html
-
-RUN rm -f /usr/share/nginx/html/nginx.conf
 
 EXPOSE 3000
