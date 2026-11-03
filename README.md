@@ -28,3 +28,21 @@ reconstruir la imagen:
 ```bash
 ./deploy.sh --build
 ```
+
+## Si reemplazás la carpeta del proyecto en el servidor
+
+Si borrás y volvés a clonar `~/tekian.ar`, el bind mount del contenedor queda
+apuntando a la carpeta anterior (vacía). Recreá el contenedor para que tome la
+carpeta nueva:
+
+```bash
+docker compose up -d --force-recreate
+```
+
+Para ver los logs, el servicio se llama `web` y el contenedor `tekian-ar`:
+
+```bash
+docker compose logs -f web
+# o
+docker logs -f tekian-ar
+```
